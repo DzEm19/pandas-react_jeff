@@ -1,0 +1,114 @@
+export type CsvRow = Record<string, string>;
+
+export type ParsedCsv = {
+  fileName: string;
+  headers: string[];
+  rows: CsvRow[];
+};
+
+export const CSV_STORAGE_KEY = 'dashboard-csv-upload';
+
+export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] } => {
+  const cleaned = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+
+  if (!cleaned) {
+    return { headers: [], rows: [] };
+  }
+
+  const lines = cleaned
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length === 0) {
+    return { headers: [], rows: [] };
+  }
+
+  const firstLine = lines[0];
+  const delimiter = firstLine.includes(';') && !firstLine.includes(',') ? ';' : ',';
+
+  const parseLine = (line: string): string[] => {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i += 1) {
+      const char = line[i];
+
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i += 1;
+        } else {
+          inQuotes = !inQuotes;
+        }
+        continue;
+      }
+
+      if (char === delimiter && !inQuotes) {
+        values.push(current.trim());
+        current = '';
+        continue;
+      }
+
+      current += char;
+    }
+
+    values.push(current.trim());
+    return values;
+  };
+
+  const rawRows = lines.map(parseLine);
+  const headers = rawRows[0].map((header, index) => (header || `columna_${index + 1}`).trim());
+  const rows = rawRows.slice(1).map((values) => {
+    const row: CsvRow = {};
+
+    headers.forEach((header, index) => {
+      row[header] = values[index] ?? '';
+    });
+
+    return row;
+  });
+
+  return { headers, rows };
+};
+
+export const loadUploadedCsv = (): ParsedCsv | null => {
+  try {
+    const saved = localStorage.getItem(CSV_STORAGE_KEY);
+    if (!saved) {
+      return null;
+    }
+
+    const parsed = JSON.parse(saved) as ParsedCsv;
+    if (!parsed || !Array.isArray(parsed.headers) || !Array.isArray(parsed.rows)) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+export const saveUploadedCsv = (data: ParsedCsv) => {
+  localStorage.setItem(CSV_STORAGE_KEY, JSON.stringify(data));
+};
+
+export const readCsvFromFile = async (file: File): Promise<ParsedCsv | null> => {
+  const text = await file.text();
+  const parsed = parseCsvText(text);
+
+  if (parsed.headers.length === 0) {
+    return null;
+  }
+
+  const result: ParsedCsv = {
+    fileName: file.name,
+    headers: parsed.headers,
+    rows: parsed.rows,
+  };
+
+  saveUploadedCsv(result);
+  return result;
+};
