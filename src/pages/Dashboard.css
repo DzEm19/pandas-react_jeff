@@ -190,6 +190,79 @@
   gap: 10px;
 }
 
+.report-card h2 {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+}
+
+.report-highlight {
+  background: linear-gradient(135deg, #f0fdfa, #ecfeff);
+}
+
+.quality-badge {
+  color: #0f766e;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.quality-bar {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ccfbf1;
+  margin-bottom: 14px;
+}
+
+.quality-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #0f766e;
+}
+
+.report-card p {
+  color: #475569;
+  line-height: 1.5;
+}
+
+.report-table-card {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.report-table th,
+.report-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.report-preview {
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.report-preview table {
+  min-width: 420px;
+}
+
+.csv-history-card {
+  overflow-x: auto;
+}
+
 .table-wrap {
   overflow-x: auto;
   background: rgba(255, 255, 255, 0.9);
@@ -254,6 +327,17 @@
   margin: 0;
   color: #475569;
   line-height: 1.55;
+}
+
+.problem-card .solution {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #dbe4ee;
+  color: #0f766e;
+}
+
+.single-problems-column {
+  grid-template-columns: 1fr;
 }
 
 .problem-chip {

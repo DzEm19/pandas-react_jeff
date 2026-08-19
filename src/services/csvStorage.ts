@@ -7,6 +7,15 @@ export type ParsedCsv = {
 };
 
 export const CSV_STORAGE_KEY = 'dashboard-csv-upload';
+export const CSV_HISTORY_KEY = 'dashboard-csv-history';
+
+export type CsvHistoryEntry = {
+  id: string;
+  fileName: string;
+  insertedAt: string;
+  rows: number;
+  columns: number;
+};
 
 export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] } => {
   const cleaned = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
@@ -75,7 +84,7 @@ export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] 
 
 export const loadUploadedCsv = (): ParsedCsv | null => {
   try {
-    const saved = localStorage.getItem(CSV_STORAGE_KEY);
+    const saved = sessionStorage.getItem(CSV_STORAGE_KEY);
     if (!saved) {
       return null;
     }
@@ -92,7 +101,37 @@ export const loadUploadedCsv = (): ParsedCsv | null => {
 };
 
 export const saveUploadedCsv = (data: ParsedCsv) => {
-  localStorage.setItem(CSV_STORAGE_KEY, JSON.stringify(data));
+  sessionStorage.setItem(CSV_STORAGE_KEY, JSON.stringify(data));
+};
+
+export const loadCsvHistory = (): CsvHistoryEntry[] => {
+  try {
+    const saved = localStorage.getItem(CSV_HISTORY_KEY);
+    if (!saved) return [];
+
+    const history = JSON.parse(saved) as CsvHistoryEntry[];
+    return Array.isArray(history) ? history : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveCsvHistory = (history: CsvHistoryEntry[]) => {
+  localStorage.setItem(CSV_HISTORY_KEY, JSON.stringify(history));
+};
+
+export const addCsvToHistory = (data: ParsedCsv) => {
+  const history: CsvHistoryEntry[] = [
+    {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      fileName: data.fileName,
+      insertedAt: new Date().toISOString(),
+      rows: data.rows.length,
+      columns: data.headers.length,
+    },
+    ...loadCsvHistory(),
+  ];
+  saveCsvHistory(history);
 };
 
 export const readCsvFromFile = async (file: File): Promise<ParsedCsv | null> => {
@@ -110,5 +149,6 @@ export const readCsvFromFile = async (file: File): Promise<ParsedCsv | null> => 
   };
 
   saveUploadedCsv(result);
+  addCsvToHistory(result);
   return result;
 };

@@ -9,8 +9,9 @@ import Services from '../pages/Services';
 import Contact from '../pages/Contact';
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
-import Destinos from '../pages/Destinos';
-import Reservaciones from '../pages/Reservaciones';
+import CsvFiles from '../pages/CsvFiles';
+import AnalysisSection from '../pages/AnalysisSection';
+import Report from '../pages/Report';
 
 function AppRoutes() {
     return (
@@ -25,8 +26,10 @@ function AppRoutes() {
 
             <Route path="/admin" element={<DashboardLayout />}>
                 <Route index element={<Dashboard />} />
-                <Route path="destinos" element={<Destinos />} />
-                <Route path="reservaciones" element={<Reservaciones />} />
+                <Route path="archivos" element={<CsvFiles />} />
+                <Route path="numpy" element={<AnalysisSection kind="numpy" />} />
+                <Route path="pandas" element={<AnalysisSection kind="pandas" />} />
+                <Route path="reporte" element={<Report />} />
             </Route>
         </Routes>
     );
