@@ -77,3 +77,4 @@ export default defineConfig([
 ])
 
 ```
+\nCI: trigger headless image test run - 2026-08-25T21:56:59Z
