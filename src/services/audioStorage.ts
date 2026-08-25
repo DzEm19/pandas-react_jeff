@@ -6,6 +6,7 @@ export type SavedAudio = {
     blob: Blob;
 };
 
+
 const DATABASE_NAME = 'pandas-react-audio';
 const STORE_NAME = 'recordings';
 
