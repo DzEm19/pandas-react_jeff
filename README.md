@@ -1,5 +1,9 @@
 # React + TypeScript + Vite
 
+## Documentacion del dashboard
+
+La explicacion del area `/admin`, sus rutas, componentes, parser CSV, almacenamiento y reportes esta en [docs/dashboard.md](docs/dashboard.md).
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

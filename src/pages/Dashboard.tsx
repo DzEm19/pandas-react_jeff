@@ -4,6 +4,7 @@ import './Dashboard.css';
 import { loadUploadedCsv, readCsvFromFile, type CsvRow, type ParsedCsv } from '../services/csvStorage';
 
 const normalizeNumericValue = (value: string): string => {
+    // Convierte formatos comunes como "$1,200" o "25%" en texto numerico.
     return value.replace(/[$%\s]/g, '').replace(/,/g, '');
 };
 
@@ -19,6 +20,8 @@ const isNumericValue = (value: string): boolean => {
 const toNumber = (value: string): number => Number(normalizeNumericValue(value));
 
 const getNumericColumnStats = (columnName: string, rows: CsvRow[]) => {
+    // Ignora celdas vacias o no numericas para que una columna mixta
+    // pueda producir estadisticas con los valores que si son validos.
     const values = rows
         .map((row) => row[columnName])
         .filter((value) => value !== undefined && value !== '' && isNumericValue(value))
@@ -52,6 +55,9 @@ const getColumnInsight = (columnName: string, rows: CsvRow[]) => {
 };
 
 const buildNumpyProblems = (headers: string[], rows: CsvRow[]) => {
+    // Usa las columnas reales del CSV para crear ejercicios adaptados al archivo.
+    // Si faltan columnas numericas, conserva nombres de respaldo para no dejar
+    // la pantalla sin contenido.
     const numericColumns = headers.filter((header) => rows.some((row) => isNumericValue(row[header] ?? '')));
     const primaryColumn = numericColumns[0] ?? headers[0] ?? 'columna_1';
     const secondaryColumn = numericColumns[1] ?? headers[1] ?? 'columna_2';
@@ -74,6 +80,8 @@ const buildNumpyProblems = (headers: string[], rows: CsvRow[]) => {
 };
 
 const buildPandasProblems = (headers: string[], rows: CsvRow[]) => {
+    // Selecciona columnas numericas y de texto para construir seis ejercicios
+    // de filtrado, agrupacion, ordenamiento y seleccion de columnas.
     const numericColumns = headers.filter((header) => rows.some((row) => isNumericValue(row[header] ?? '')));
     const primaryColumn = numericColumns[0] ?? headers[0] ?? 'columna_1';
     const secondaryColumn = numericColumns[1] ?? headers[1] ?? 'columna_2';
@@ -99,6 +107,8 @@ function Dashboard() {
     const [uploaded, setUploaded] = useState<ParsedCsv | null>(null);
 
     useEffect(() => {
+        // El CSV activo vive en sessionStorage y se recupera al entrar de nuevo
+        // en la pantalla mientras la pestaña del navegador siga abierta.
         const stored = loadUploadedCsv();
         if (stored) {
             setUploaded(stored);
@@ -120,6 +130,8 @@ function Dashboard() {
     };
 
     const reportSummary = useMemo(() => {
+        // Este resumen depende solo del archivo activo. useMemo evita repetir
+        // el recorrido de todas las filas durante renders sin cambios de datos.
         if (!uploaded) {
             return null;
         }
@@ -162,6 +174,8 @@ function Dashboard() {
     const previewRows = uploaded?.rows.slice(0, 5) ?? [];
 
     const exportReport = () => {
+        // El reporte se genera en el cliente como texto plano y se descarga
+        // mediante una URL temporal; no se necesita un endpoint del servidor.
         if (!uploaded || !reportSummary) {
             return;
         }

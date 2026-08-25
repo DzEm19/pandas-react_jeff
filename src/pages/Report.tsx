@@ -17,6 +17,8 @@ function Report() {
     const [uploaded] = useState<ParsedCsv | null>(() => loadUploadedCsv());
 
     const summary = useMemo(() => {
+        // Recorre el CSV una vez por cambio de archivo y prepara los datos de
+        // las tarjetas, la tabla y la barra de calidad.
         if (!uploaded) return null;
         const numericColumns = uploaded.headers.filter((header) => uploaded.rows.some((row) => isNumeric(row[header] ?? '')));
         const missingByColumn = uploaded.headers.map((header) => ({
@@ -24,6 +26,8 @@ function Report() {
             missing: uploaded.rows.filter((row) => !row[header]).length,
         }));
         const profiles: ColumnProfile[] = uploaded.headers.map((header) => {
+            // El tipo se infiere por la presencia de al menos un valor numerico;
+            // las celdas vacias no cuentan para el promedio.
             const values = uploaded.rows.map((row) => row[header] ?? '');
             const numericValues = values.filter(isNumeric).map((value) => Number(normalize(value)));
             return {
@@ -47,6 +51,8 @@ function Report() {
     }, [uploaded]);
 
     const downloadReport = () => {
+        // Convierte el resumen en texto plano y usa Blob para iniciar una
+        // descarga local sin enviar los datos fuera del navegador.
         if (!uploaded || !summary) return;
         const content = [
             'REPORTE DEL CSV',

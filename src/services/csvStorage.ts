@@ -18,6 +18,8 @@ export type CsvHistoryEntry = {
 };
 
 export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] } => {
+  // Este parser cubre CSV de una linea por registro, con coma o punto y coma,
+  // y respeta delimitadores dentro de valores entre comillas.
   const cleaned = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
 
   if (!cleaned) {
@@ -37,6 +39,8 @@ export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] 
   const delimiter = firstLine.includes(';') && !firstLine.includes(',') ? ';' : ',';
 
   const parseLine = (line: string): string[] => {
+    // Se recorre caracter por caracter porque dividir directamente por el
+    // delimitador romperia valores como "Ciudad, Estado".
     const values: string[] = [];
     let current = '';
     let inQuotes = false;
@@ -83,6 +87,8 @@ export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] 
 };
 
 export const loadUploadedCsv = (): ParsedCsv | null => {
+  // La validacion minima evita que un JSON invalido o con otra estructura
+  // llegue a los componentes que esperan headers y rows.
   try {
     const saved = sessionStorage.getItem(CSV_STORAGE_KEY);
     if (!saved) {
@@ -121,6 +127,8 @@ const saveCsvHistory = (history: CsvHistoryEntry[]) => {
 };
 
 export const addCsvToHistory = (data: ParsedCsv) => {
+  // El historial conserva metadatos, no el contenido del CSV, para mantenerlo
+  // ligero y permitir que el archivo activo tenga un ciclo de vida distinto.
   const history: CsvHistoryEntry[] = [
     {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -135,6 +143,8 @@ export const addCsvToHistory = (data: ParsedCsv) => {
 };
 
 export const readCsvFromFile = async (file: File): Promise<ParsedCsv | null> => {
+  // Es la entrada principal de una carga: lee, interpreta, valida y persiste
+  // el archivo antes de devolverlo al estado de la pantalla.
   const text = await file.text();
   const parsed = parseCsvText(text);
 

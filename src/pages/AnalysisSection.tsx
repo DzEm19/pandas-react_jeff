@@ -17,6 +17,8 @@ const numericValues = (column: string, rows: CsvRow[]): number[] => rows
     .map((value) => Number(normalizeNumericValue(value)));
 
 const columnsFor = (headers: string[], rows: CsvRow[]) => {
+    // Los ejercicios necesitan una columna numerica y otra de texto. Se eligen
+    // automaticamente para que funcionen con CSV de estructuras diferentes.
     const numericColumns = headers.filter((header) => rows.some((row) => isNumericValue(row[header] ?? '')));
     return {
         primary: numericColumns[0] ?? headers[0] ?? 'columna_1',
@@ -26,6 +28,8 @@ const columnsFor = (headers: string[], rows: CsvRow[]) => {
 };
 
 const buildProblems = (kind: AnalysisKind, data: ParsedCsv) => {
+    // La lista cambia segun la herramienta seleccionada, pero comparte la
+    // seleccion de columnas y el formato de salida de cada ejercicio.
     const columns = columnsFor(data.headers, data.rows);
     const { primary, secondary, text } = columns;
 
@@ -61,6 +65,8 @@ const solveProblem = (
     data: ParsedCsv,
     columns: { primary: string; secondary: string; text: string },
 ): string => {
+    // Las respuestas se calculan con TypeScript en el navegador. Representan
+    // operaciones equivalentes a NumPy o Pandas, no una ejecucion de Python.
     const values = numericValues(columns.primary, data.rows);
     const secondaryValues = numericValues(columns.secondary, data.rows);
 
