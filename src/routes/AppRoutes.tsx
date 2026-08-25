@@ -12,6 +12,7 @@ import Dashboard from '../pages/Dashboard';
 import CsvFiles from '../pages/CsvFiles';
 import AnalysisSection from '../pages/AnalysisSection';
 import Report from '../pages/Report';
+import Movement from '../pages/Movement';
 
 function AppRoutes() {
     // Define dos zonas: paginas publicas con MainLayout y herramientas de
@@ -33,6 +34,7 @@ function AppRoutes() {
                 <Route path="numpy" element={<AnalysisSection kind="numpy" />} />
                 <Route path="pandas" element={<AnalysisSection kind="pandas" />} />
                 <Route path="reporte" element={<Report />} />
+                <Route path="movimiento" element={<Movement />} />
             </Route>
         </Routes>
     );
