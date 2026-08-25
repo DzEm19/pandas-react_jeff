@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const puppeteer = require('puppeteer');
+import fs from 'fs';
+import path from 'path';
+import puppeteer from 'puppeteer';
 
 (async () => {
-  const outDir = path.resolve(__dirname, '..', 'files');
+  const outDir = path.resolve(process.cwd(), 'files');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
   const logPath = path.join(outDir, 'image_test_console.log');
   const screenshotPath = path.join(outDir, 'image_test_screenshot.png');
