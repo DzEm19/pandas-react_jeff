@@ -30,12 +30,12 @@ const [password, setPassword] = useState('');
 
       <div style={styles.contentWrapper}>
         <div style={styles.leftSection}>
-          <span style={styles.badgeText}>EXPLORA EL MUNDO</span>
+          <span style={styles.badgeText}>ACCESO AL ENTORNO</span>
           <h1 style={styles.heroTitle}>
-            MÁS DE 10 AÑOS <br /> DE EXPERIENCIA
+            Comienza a <br /> trabajar con Python
           </h1>
           <p style={styles.heroSubtitle}>
-            Porque sabemos muy bien el servicio que mereces.
+            Accede a tus herramientas de análisis de datos, automatización y aprendizaje con una experiencia visual alineada con la plataforma.
           </p>
         </div>
 
@@ -43,7 +43,6 @@ const [password, setPassword] = useState('');
           <div style={styles.glassFormCard}>
             <h2 style={styles.formTitle}>INICIAR SESIÓN</h2>
 
-            {/* Mensaje de error en caso de fallo */}
             {error && <div style={styles.errorMessage}>{error}</div>}
 
             <form onSubmit={handleSubmit} style={styles.form}>
@@ -90,11 +89,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '12px',
+    borderRadius: '28px',
     overflow: 'hidden',
-    backgroundImage: `url(${fondoImagen})`,
+    backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(29, 78, 216, 0.45)), url(${fondoImagen})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    boxShadow: '0 28px 80px rgba(15, 23, 42, 0.25)',
   },
   overlay: {
     position: 'absolute',
@@ -102,7 +102,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(10, 25, 45, 0.35)',
+    background: 'linear-gradient(90deg, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.4) 45%, rgba(15, 23, 42, 0.1) 100%)',
     zIndex: 1,
   },
   contentWrapper: {
@@ -112,7 +112,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    maxWidth: '1100px',
+    maxWidth: '1180px',
     padding: '3rem 2rem',
     flexWrap: 'wrap',
     gap: '2rem',
@@ -121,54 +121,61 @@ const styles: { [key: string]: React.CSSProperties } = {
     flex: '1 1 450px',
     color: '#ffffff',
     textShadow: '0 2px 8px rgba(0,0,0,0.6)',
+    maxWidth: '560px',
   },
   badgeText: {
-    fontSize: '0.85rem',
+    display: 'inline-block',
+    fontSize: '0.82rem',
     letterSpacing: '3px',
-    color: '#38bdf8',
-    fontWeight: 'bold',
+    color: '#fbbf24',
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   heroTitle: {
-  fontSize: '2.5rem',
-  fontWeight: '900',
-  lineHeight: '1.2',
-  margin: '0.8rem 0',
-  color: '#ffffff',
-  textTransform: 'uppercase', 
-
+    fontSize: 'clamp(2.4rem, 4vw, 4rem)',
+    fontWeight: '900',
+    lineHeight: '1.08',
+    margin: '0.8rem 0 1rem',
+    color: '#ffffff',
+    letterSpacing: '-0.05em',
   },
   heroSubtitle: {
-    fontSize: '1rem',
-    color: '#f1f5f9',
+    fontSize: '1.08rem',
+    color: 'rgba(226, 232, 240, 0.95)',
+    lineHeight: '1.7',
+    maxWidth: '520px',
   },
   rightSection: {
-    flex: '0 1 360px',
+    flex: '0 1 380px',
     width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
   },
   glassFormCard: {
-    backgroundColor: 'rgba(11, 19, 32, 0.65)',
-    backdropFilter: 'blur(10px)',
-    WebkitBackdropFilter: 'blur(10px)',
-    padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 20px 30px rgba(0, 0, 0, 0.35)',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
+    width: '100%',
+    background: 'rgba(15, 23, 42, 0.7)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+    padding: '2rem 1.7rem',
+    borderRadius: '24px',
+    boxShadow: '0 24px 50px rgba(15, 23, 42, 0.35)',
+    border: '1px solid rgba(191, 219, 254, 0.22)',
   },
   formTitle: {
-    fontSize: '1.1rem',
+    fontSize: '1.15rem',
     fontWeight: '800',
-    letterSpacing: '1.5px',
+    letterSpacing: '1.6px',
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: '1.2rem',
   },
   errorMessage: {
-    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-    border: '1px solid rgba(239, 68, 68, 0.6)',
-    color: '#fca5a5',
-    padding: '0.6rem',
-    borderRadius: '6px',
-    fontSize: '0.75rem',
+    backgroundColor: 'rgba(239, 68, 68, 0.18)',
+    border: '1px solid rgba(239, 68, 68, 0.7)',
+    color: '#fecaca',
+    padding: '0.7rem',
+    borderRadius: '12px',
+    fontSize: '0.8rem',
     textAlign: 'center',
     marginBottom: '1rem',
   },
@@ -180,34 +187,36 @@ const styles: { [key: string]: React.CSSProperties } = {
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.4rem',
+    gap: '0.5rem',
   },
   label: {
     fontSize: '0.75rem',
-    fontWeight: '600',
-    color: '#cbd5e1',
+    fontWeight: '700',
+    color: '#dbeafe',
+    letterSpacing: '0.04em',
   },
   input: {
-    padding: '0.75rem',
-    borderRadius: '6px',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    padding: '0.9rem 0.95rem',
+    borderRadius: '12px',
+    border: '1px solid rgba(147, 197, 253, 0.28)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     color: '#0f172a',
-    fontSize: '0.9rem',
+    fontSize: '0.94rem',
     outline: 'none',
+    boxShadow: 'inset 0 1px 2px rgba(15, 23, 42, 0.06)',
   },
   button: {
     marginTop: '0.8rem',
-    padding: '0.85rem',
-    borderRadius: '20px',
+    padding: '0.95rem 1rem',
+    borderRadius: '999px',
     border: 'none',
-    backgroundColor: '#ff6b2b',
-    color: '#ffffff',
-    fontWeight: 'bold',
-    fontSize: '0.85rem',
+    background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+    color: '#0f172a',
+    fontWeight: '800',
+    fontSize: '0.9rem',
     letterSpacing: '1px',
     cursor: 'pointer',
-    boxShadow: '0 4px 12px rgba(255, 107, 43, 0.4)',
+    boxShadow: '0 16px 30px rgba(245, 158, 11, 0.35)',
   },
 };
 

@@ -31,7 +31,9 @@ export type DocumentationCsvEntry = {
   insertedAt: string;
   size: number;
   source: 'documentation';
-  csv: ParsedCsv;
+  type?: 'csv' | 'pdf';
+  dataUrl?: string;
+  csv?: ParsedCsv;
 };
 
 export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] } => {
@@ -172,18 +174,34 @@ const saveDocumentationCsv = (entries: DocumentationCsvEntry[]) => {
   localStorage.setItem(DOCUMENTATION_KEY, JSON.stringify(entries));
 };
 
-export const addCsvToDocumentation = (data: ParsedCsv, size = 0) => {
+export const addCsvToDocumentation = (data: ParsedCsv, size = 0, dataUrl?: string) => {
   const entry: DocumentationCsvEntry = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     fileName: data.fileName,
     insertedAt: new Date().toISOString(),
     size,
     source: 'documentation',
+    type: 'csv',
+    dataUrl,
     csv: {
       ...data,
       rows: data.rows.slice(0, CSV_PREVIEW_LIMIT),
       totalRows: data.totalRows ?? data.rows.length,
     },
+  };
+  saveDocumentationCsv([entry, ...loadDocumentationCsv()]);
+  return entry;
+};
+
+export const addPdfToDocumentation = (fileName: string, size = 0, dataUrl: string) => {
+  const entry: DocumentationCsvEntry = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    fileName,
+    insertedAt: new Date().toISOString(),
+    size,
+    source: 'documentation',
+    type: 'pdf',
+    dataUrl,
   };
   saveDocumentationCsv([entry, ...loadDocumentationCsv()]);
   return entry;

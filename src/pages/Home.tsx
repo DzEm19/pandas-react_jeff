@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaPython, FaCode, FaChartLine, FaDatabase, FaBook, FaRocket } from 'react-icons/fa';
 
@@ -265,82 +266,98 @@ Name: Salario, dtype: float64`,
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <motion.div
-            animate={{ 
-              rotate: [0, 10, -10, 10, 0],
-              scale: [1, 1.1, 1]
-            }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 3
-            }}
-          >
-            <FaPython className="python-logo" />
-          </motion.div>
-          
-          <motion.h1
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            Aprende Python
-          </motion.h1>
-          
-          <motion.p 
-            className="subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            Domina Python desde lo básico hasta el análisis de datos con Pandas
-          </motion.p>
+          <div className="hero-copy">
+            <motion.div
+              className="hero-icon-wrap"
+              animate={{ 
+                rotate: [0, 10, -10, 10, 0],
+                scale: [1, 1.1, 1]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 3
+              }}
+            >
+              <FaPython className="python-logo" />
+            </motion.div>
+            
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              Python para análisis, automatización y datos
+            </motion.h1>
+            
+            <motion.p 
+              className="subtitle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              Domina los fundamentos, trabaja con Pandas y crea soluciones con impacto real desde el primer paso.
+            </motion.p>
 
-          <motion.div 
-            className="hero-buttons"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <a href="#concepts" className="btn-primary">
-              Ver Conceptos
-            </a>
-            <a href="#features" className="btn-secondary">
-              Características
-            </a>
-          </motion.div>
+            <motion.div 
+              className="hero-buttons"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <a href="#concepts" className="btn-primary">
+                Ver conceptos
+              </a>
+              <a href="#features" className="btn-secondary">
+                Explorar rutas
+              </a>
+            </motion.div>
 
-          <motion.div 
-            className="stats"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
             <motion.div 
-              className="stat"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
+              className="stats"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
             >
-              <span className="number">{pythonConcepts.length}</span>
-              <span className="label">Conceptos</span>
+              <motion.div 
+                className="stat"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span className="number">{pythonConcepts.length}</span>
+                <span className="label">Conceptos</span>
+              </motion.div>
+              <motion.div 
+                className="stat"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span className="number">5</span>
+                <span className="label">Categorías</span>
+              </motion.div>
+              <motion.div 
+                className="stat"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span className="number">100%</span>
+                <span className="label">Gratuito</span>
+              </motion.div>
             </motion.div>
-            <motion.div 
-              className="stat"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <span className="number">5</span>
-              <span className="label">Categorías</span>
-            </motion.div>
-            <motion.div 
-              className="stat"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <span className="number">100%</span>
-              <span className="label">Gratuito</span>
-            </motion.div>
-          </motion.div>
+          </div>
+
+          <div className="hero-visual" aria-label="Resumen del aprendizaje">
+            <div className="hero-panel">
+              <span className="panel-badge">Ruta de aprendizaje</span>
+              <h3>Python + Datos</h3>
+              <ul>
+                <li><span>01</span> Fundamentos</li>
+                <li><span>02</span> Estructuras</li>
+                <li><span>03</span> Pandas</li>
+                <li><span>04</span> Automatización</li>
+              </ul>
+            </div>
+          </div>
         </motion.div>
       </section>
 
@@ -503,14 +520,11 @@ Name: Salario, dtype: float64`,
         >
           <h2>¿Listo para comenzar?</h2>
           <p>Explora todos los conceptos y comienza tu viaje en Python hoy</p>
-          <motion.a 
-            href="#concepts" 
-            className="cta-button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Empezar Ahora
-          </motion.a>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link to="/login" className="cta-button">
+              Empezar Ahora
+            </Link>
+          </motion.div>
         </motion.div>
       </section>
     </div>

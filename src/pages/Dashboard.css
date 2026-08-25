@@ -377,13 +377,21 @@
   font-size: 1.6rem;
 }
 
+.compact-header {
+  margin-bottom: 12px;
+}
+
+.compact-header h2 {
+  font-size: 1rem;
+}
+
 /* Etiqueta que identifica el tipo de resumen o fuente mostrada. */
 .report-tag {
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
   background: #dbeafe;
   color: #1d4ed8;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
@@ -412,17 +420,27 @@
 /* Distribucion adaptable de las tarjetas del reporte. */
 .report-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.compact-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
 }
 
 /* Marco visual de cada bloque de informacion del reporte. */
 .report-card {
   background: rgba(255, 255, 255, 0.86);
-  padding: 24px;
-  border-radius: 20px;
+  padding: 20px;
+  border-radius: 18px;
   border: 1px solid rgba(148, 163, 184, 0.18);
-  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.05);
+}
+
+.compact-card {
+  padding: 14px 14px 16px;
 }
 
 .report-card h3 {
@@ -474,6 +492,72 @@
 .report-card p {
   color: #475569;
   line-height: 1.5;
+}
+
+.chart-list {
+  display: grid;
+  gap: 14px;
+}
+
+.compact-list {
+  gap: 10px;
+}
+
+.chart-row {
+  display: grid;
+  gap: 6px;
+}
+
+.chart-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+}
+
+.chart-meta span {
+  color: #334155;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-meta strong {
+  color: #0f172a;
+  font-size: 0.72rem;
+}
+
+.mini-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: #dbeafe;
+  overflow: hidden;
+}
+
+.mini-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #38bdf8);
+}
+
+.mini-bar-accent span {
+  background: linear-gradient(90deg, #14b8a6, #22c55e);
+}
+
+.mini-bar-alt span {
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+}
+
+.mini-bar-warm span {
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+
+.chart-row small {
+  color: #475569;
+  font-size: 0.68rem;
 }
 
 /* Tabla del reporte: el contenedor permite desplazamiento horizontal en movil. */
@@ -623,6 +707,40 @@
 .documentation-library {
   max-width: 820px;
   margin: 0 auto;
+}
+
+.documentation-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.documentation-summary-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.04);
+}
+
+.documentation-summary-card.accent {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+.documentation-summary-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.documentation-summary-card strong {
+  font-size: clamp(1.2rem, 2vw, 1.85rem);
+  color: #0f172a;
 }
 
 .documentation-list {
