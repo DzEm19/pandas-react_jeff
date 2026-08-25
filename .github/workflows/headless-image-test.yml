@@ -1,0 +1,55 @@
+name: Headless ImageModel test
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+
+jobs:
+  headless-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Start static server
+        # Use http-server via npx to serve the production build
+        run: npx http-server ./dist -p 5175 &
+
+      - name: Wait for server
+        run: |
+          for i in {1..20}; do
+            if curl -sSf http://localhost:5175/ >/dev/null; then
+              echo "server up"; break
+            fi
+            echo "waiting..."; sleep 1
+          done
+
+      - name: Run headless image test
+        env:
+          URL: http://localhost:5175/admin/imagen
+        run: node scripts/headless_image_test.js
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-test-screenshot
+          path: files/image_test_screenshot.png
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-test-console-log
+          path: files/image_test_console.log
