@@ -14,6 +14,7 @@ import AnalysisSection from '../pages/AnalysisSection';
 import Report from '../pages/Report';
 import Movement from '../pages/Movement';
 import AudioModel from '../pages/AudioModel';
+import ImageModel from '../pages/ImageModel';
 import Documentation from '../pages/Documentation';
 
 function AppRoutes() {
@@ -39,6 +40,7 @@ function AppRoutes() {
                 <Route path="reporte" element={<Report />} />
                 <Route path="movimiento" element={<Movement />} />
                 <Route path="audio" element={<AudioModel />} />
+                <Route path="imagen" element={<ImageModel />} />
             </Route>
         </Routes>
     );
