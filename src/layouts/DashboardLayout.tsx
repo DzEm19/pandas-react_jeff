@@ -16,6 +16,7 @@ function DashboardLayout() {
                 <NavLink to="/admin/reporte">Reporte</NavLink>
                 <NavLink to="/admin/movimiento">Movimiento</NavLink>
                 <NavLink to="/admin/audio">Audio</NavLink>
+                <NavLink to="/admin/imagen">Imagen</NavLink>
                 <NavLink to="/" className="dash-logout">Volver al Inicio</NavLink>
             </aside>
             {/* El contenido cambia sin desmontar la estructura del dashboard. */}
