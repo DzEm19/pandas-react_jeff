@@ -39,8 +39,8 @@ import puppeteer from 'puppeteer';
     // increase timeout for slow environments
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
-    // wait a little for any runtime logs
-    await page.waitForTimeout(4000);
+    // wait a little for any runtime logs (use generic sleep to avoid API mismatches)
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
     // take screenshot
     await page.screenshot({ path: screenshotPath, fullPage: true });

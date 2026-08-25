@@ -25,8 +25,8 @@ jobs:
         run: npm run build
 
       - name: Start static server
-        # Use http-server via npx to serve the production build
-        run: npx http-server ./dist -p 5175 &
+        # Use 'serve' with SPA single-page fallback to ensure /admin/imagen serves index.html
+        run: npx serve -s ./dist -l 5175 &
 
       - name: Wait for server
         run: |
