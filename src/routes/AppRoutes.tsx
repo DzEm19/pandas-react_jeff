@@ -13,6 +13,7 @@ import CsvFiles from '../pages/CsvFiles';
 import AnalysisSection from '../pages/AnalysisSection';
 import Report from '../pages/Report';
 import AudioModel from '../pages/AudioModel';
+import Documentation from '../pages/Documentation';
 
 function AppRoutes() {
     // Define dos zonas: paginas publicas con MainLayout y herramientas de
@@ -31,6 +32,7 @@ function AppRoutes() {
             <Route path="/admin" element={<DashboardLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="archivos" element={<CsvFiles />} />
+                <Route path="documentacion" element={<Documentation />} />
                 <Route path="numpy" element={<AnalysisSection kind="numpy" />} />
                 <Route path="pandas" element={<AnalysisSection kind="pandas" />} />
                 <Route path="reporte" element={<Report />} />

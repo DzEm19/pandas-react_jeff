@@ -6,10 +6,14 @@ export type ParsedCsv = {
   fileName: string;
   headers: string[];
   rows: CsvRow[];
+  totalRows?: number;
 };
+
+export const CSV_PREVIEW_LIMIT = 25;
 
 export const CSV_STORAGE_KEY = 'dashboard-csv-upload';
 export const CSV_HISTORY_KEY = 'dashboard-csv-history';
+export const DOCUMENTATION_KEY = 'dashboard-documentation';
 
 // El historial guarda solo informacion de control para no duplicar el archivo
 // completo en localStorage.
@@ -19,6 +23,15 @@ export type CsvHistoryEntry = {
   insertedAt: string;
   rows: number;
   columns: number;
+};
+
+export type DocumentationCsvEntry = {
+  id: string;
+  fileName: string;
+  insertedAt: string;
+  size: number;
+  source: 'documentation';
+  csv: ParsedCsv;
 };
 
 export const parseCsvText = (text: string): { headers: string[]; rows: CsvRow[] } => {
@@ -139,6 +152,47 @@ const saveCsvHistory = (history: CsvHistoryEntry[]) => {
   localStorage.setItem(CSV_HISTORY_KEY, JSON.stringify(history));
 };
 
+export const clearCsvHistory = () => {
+  localStorage.removeItem(CSV_HISTORY_KEY);
+};
+
+export const loadDocumentationCsv = (): DocumentationCsvEntry[] => {
+  try {
+    const saved = localStorage.getItem(DOCUMENTATION_KEY);
+    if (!saved) return [];
+
+    const entries = JSON.parse(saved) as DocumentationCsvEntry[];
+    return Array.isArray(entries) ? entries.filter((entry) => entry.source === 'documentation') : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveDocumentationCsv = (entries: DocumentationCsvEntry[]) => {
+  localStorage.setItem(DOCUMENTATION_KEY, JSON.stringify(entries));
+};
+
+export const addCsvToDocumentation = (data: ParsedCsv, size = 0) => {
+  const entry: DocumentationCsvEntry = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    fileName: data.fileName,
+    insertedAt: new Date().toISOString(),
+    size,
+    source: 'documentation',
+    csv: {
+      ...data,
+      rows: data.rows.slice(0, CSV_PREVIEW_LIMIT),
+      totalRows: data.totalRows ?? data.rows.length,
+    },
+  };
+  saveDocumentationCsv([entry, ...loadDocumentationCsv()]);
+  return entry;
+};
+
+export const removeCsvFromDocumentation = (id: string) => {
+  saveDocumentationCsv(loadDocumentationCsv().filter((entry) => entry.id !== id));
+};
+
 export const addCsvToHistory = (data: ParsedCsv) => {
   // Anteponer el archivo nuevo conserva el orden mas reciente primero. Solo se
   // guardan metadatos, por lo que el historial tiene un ciclo de vida distinto.
@@ -169,9 +223,15 @@ export const readCsvFromFile = async (file: File): Promise<ParsedCsv | null> => 
     fileName: file.name,
     headers: parsed.headers,
     rows: parsed.rows,
+    totalRows: parsed.rows.length,
   };
 
-  saveUploadedCsv(result);
+  // Conserva el archivo completo en memoria para el análisis actual, pero solo
+  // persiste la vista previa para evitar superar el límite de sessionStorage.
+  saveUploadedCsv({
+    ...result,
+    rows: parsed.rows.slice(0, CSV_PREVIEW_LIMIT),
+  });
   addCsvToHistory(result);
   return result;
 };

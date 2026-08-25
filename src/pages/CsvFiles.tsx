@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './Dashboard.css';
-import { loadCsvHistory, type CsvHistoryEntry } from '../services/csvStorage';
+import { clearCsvHistory, loadCsvHistory, type CsvHistoryEntry } from '../services/csvStorage';
 
 // Convierte la fecha ISO producida por csvStorage en un formato local legible.
 const formatDate = (value: string) => new Intl.DateTimeFormat('es-MX', {
@@ -11,12 +11,16 @@ const formatDate = (value: string) => new Intl.DateTimeFormat('es-MX', {
 function CsvFiles() {
     // Esta vista consume solo los metadatos persistidos en localStorage; no
     // necesita conservar ni volver a procesar el contenido de cada CSV.
-    const [history, setHistory] = useState<CsvHistoryEntry[]>([]);
+    const [history, setHistory] = useState<CsvHistoryEntry[]>(() => loadCsvHistory());
 
-    useEffect(() => {
-        // Carga el historial cuando la ruta se monta para poblar la tabla.
-        setHistory(loadCsvHistory());
-    }, []);
+    const handleClearHistory = () => {
+        if (!window.confirm('¿Quieres borrar todos los registros CSV?')) {
+            return;
+        }
+
+        clearCsvHistory();
+        setHistory([]);
+    };
 
     return (
         // Contenedor que reutiliza la estructura visual del area administrativa.
@@ -26,7 +30,14 @@ function CsvFiles() {
                     <p className="eyebrow">Control de datos</p>
                     <h1>Archivos CSV</h1>
                 </div>
-                <span className="report-tag">{history.length} archivos registrados</span>
+                <div className="csv-history-actions">
+                    <span className="report-tag">{history.length} archivos registrados</span>
+                    {history.length > 0 && (
+                        <button className="danger-button" type="button" onClick={handleClearHistory}>
+                            Borrar registros
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="dash-upload-status">

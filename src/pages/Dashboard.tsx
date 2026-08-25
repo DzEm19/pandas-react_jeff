@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import './Dashboard.css';
 import { loadUploadedCsv, readCsvFromFile, type CsvRow, type ParsedCsv } from '../services/csvStorage';
@@ -116,16 +116,7 @@ const buildPandasProblems = (headers: string[], rows: CsvRow[]) => {
 function Dashboard() {
     // Estado fuente de toda la pantalla: null significa que aun no hay CSV y
     // un ParsedCsv contiene nombre, encabezados y filas ya interpretadas.
-    const [uploaded, setUploaded] = useState<ParsedCsv | null>(null);
-
-    useEffect(() => {
-        // Al montar el componente se recupera el CSV guardado por el servicio.
-        // No hay peticion HTTP: la lectura se realiza desde sessionStorage.
-        const stored = loadUploadedCsv();
-        if (stored) {
-            setUploaded(stored);
-        }
-    }, []);
+    const [uploaded, setUploaded] = useState<ParsedCsv | null>(() => loadUploadedCsv());
 
     // Recibe el evento del input de tipo file, procesa el primer archivo y
     // actualiza el estado solo cuando el parser devuelve un CSV valido.
@@ -152,7 +143,7 @@ function Dashboard() {
             return null;
         }
 
-        const totalRows = uploaded.rows.length;
+        const totalRows = uploaded.totalRows ?? uploaded.rows.length;
         const totalColumns = uploaded.headers.length;
         const totalMissing = uploaded.rows.reduce((count, row) => {
             return count + Object.values(row).filter((value) => value === '').length;
@@ -189,9 +180,9 @@ function Dashboard() {
         return buildPandasProblems(uploaded.headers, uploaded.rows);
     }, [uploaded]);
 
-    // La tabla inicial limita la cantidad de filas para mantener la vista
-    // previa legible; el archivo completo sigue disponible en memoria.
-    const previewRows = uploaded?.rows.slice(0, 5) ?? [];
+    // La tabla limita la cantidad de filas para mantener la vista previa legible.
+    const previewRows = uploaded?.rows.slice(0, 25) ?? [];
+    const totalRows = uploaded?.totalRows ?? uploaded?.rows.length ?? 0;
 
     // Serializa el resumen y lo descarga desde el navegador. Esto es una
     // exportacion frontend: no intervienen servidor, API ni base de datos.
@@ -274,7 +265,7 @@ function Dashboard() {
                         </div>
                         <div className="summary-card">
                             <span>Filas</span>
-                            <strong>{reportSummary?.totalRows ?? 0}</strong>
+                            <strong>{totalRows}</strong>
                         </div>
                         <div className="summary-card">
                             <span>Columnas</span>
@@ -298,7 +289,7 @@ function Dashboard() {
                                 <h3>Resumen general</h3>
                                 <ul>
                                     <li>Archivo cargado: <strong>{uploaded.fileName}</strong></li>
-                                    <li>Registros analizados: <strong>{reportSummary?.totalRows}</strong></li>
+                                    <li>Registros cargados: <strong>{totalRows}</strong></li>
                                     <li>Columnas detectadas: <strong>{reportSummary?.totalColumns}</strong></li>
                                     <li>Campos numéricos: <strong>{reportSummary?.numericColumns.length ?? 0}</strong></li>
                                 </ul>
@@ -315,10 +306,11 @@ function Dashboard() {
                         </div>
                     </section>
 
-                    {/* Vista limitada a cinco filas para inspeccionar el formato. */}
+                    {/* Vista limitada a 25 filas para inspeccionar el formato. */}
                     <section className="table-section">
                         <div className="section-title-row">
                             <h2>Vista previa del CSV</h2>
+                            <span className="report-tag">Mostrando {Math.min(25, totalRows)} de {totalRows}</span>
                         </div>
 
                         <div className="table-wrap">
