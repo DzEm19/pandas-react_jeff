@@ -13,6 +13,7 @@ function DashboardLayout() {
                 <NavLink to="/admin/numpy">NumPy</NavLink>
                 <NavLink to="/admin/pandas">Pandas</NavLink>
                 <NavLink to="/admin/reporte">Reporte</NavLink>
+                <NavLink to="/admin/audio">Audio</NavLink>
                 <NavLink to="/" className="dash-logout">Volver al Inicio</NavLink>
             </aside>
             {/* El contenido cambia sin desmontar la estructura del dashboard. */}
