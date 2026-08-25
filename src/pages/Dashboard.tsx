@@ -3,25 +3,29 @@ import type { ChangeEvent } from 'react';
 import './Dashboard.css';
 import { loadUploadedCsv, readCsvFromFile, type CsvRow, type ParsedCsv } from '../services/csvStorage';
 
+// Quita simbolos habituales de importes, porcentajes y separadores para que
+// Number() pueda interpretar los valores del CSV como cantidades numericas.
 const normalizeNumericValue = (value: string): string => {
-    // Convierte formatos comunes como "$1,200" o "25%" en texto numerico.
     return value.replace(/[$%\s]/g, '').replace(/,/g, '');
 };
 
+// Comprueba que una celda tenga contenido y que, despues de normalizarla,
+// pueda convertirse en un numero valido.
 const isNumericValue = (value: string): boolean => {
     if (!value || value.trim() === '') {
         return false;
     }
-
     const normalized = normalizeNumericValue(value);
     return normalized !== '' && !Number.isNaN(Number(normalized));
 };
 
+// Centraliza la conversion de una celda numerica para reutilizar la misma
+// regla en las estadisticas y evitar operar directamente con texto.
 const toNumber = (value: string): number => Number(normalizeNumericValue(value));
 
+// Obtiene las estadisticas basicas de una columna, ignorando celdas vacias o
+// incompatibles. Devuelve null cuando no existe ningun dato numerico.
 const getNumericColumnStats = (columnName: string, rows: CsvRow[]) => {
-    // Ignora celdas vacias o no numericas para que una columna mixta
-    // pueda producir estadisticas con los valores que si son validos.
     const values = rows
         .map((row) => row[columnName])
         .filter((value) => value !== undefined && value !== '' && isNumericValue(value))
@@ -45,6 +49,8 @@ const getNumericColumnStats = (columnName: string, rows: CsvRow[]) => {
     };
 };
 
+// Convierte las estadisticas de una columna en el texto que aparece en
+// "Informacion clave" del reporte inicial.
 const getColumnInsight = (columnName: string, rows: CsvRow[]) => {
     const stats = getNumericColumnStats(columnName, rows);
     if (!stats) {
@@ -54,6 +60,8 @@ const getColumnInsight = (columnName: string, rows: CsvRow[]) => {
     return `En ${columnName}, el promedio es ${stats.average.toFixed(2)}, el mínimo es ${stats.min} y el máximo es ${stats.max}.`;
 };
 
+// Construye seis peticiones educativas de NumPy usando los encabezados reales
+// del archivo para que los ejercicios se adapten a cada CSV cargado.
 const buildNumpyProblems = (headers: string[], rows: CsvRow[]) => {
     // Usa las columnas reales del CSV para crear ejercicios adaptados al archivo.
     // Si faltan columnas numericas, conserva nombres de respaldo para no dejar
@@ -79,6 +87,8 @@ const buildNumpyProblems = (headers: string[], rows: CsvRow[]) => {
     }));
 };
 
+// Construye seis peticiones educativas de Pandas. La funcion solo genera el
+// enunciado; la ejecucion equivalente se muestra en la vista de analisis.
 const buildPandasProblems = (headers: string[], rows: CsvRow[]) => {
     // Selecciona columnas numericas y de texto para construir seis ejercicios
     // de filtrado, agrupacion, ordenamiento y seleccion de columnas.
@@ -104,17 +114,21 @@ const buildPandasProblems = (headers: string[], rows: CsvRow[]) => {
 };
 
 function Dashboard() {
+    // Estado fuente de toda la pantalla: null significa que aun no hay CSV y
+    // un ParsedCsv contiene nombre, encabezados y filas ya interpretadas.
     const [uploaded, setUploaded] = useState<ParsedCsv | null>(null);
 
     useEffect(() => {
-        // El CSV activo vive en sessionStorage y se recupera al entrar de nuevo
-        // en la pantalla mientras la pestaña del navegador siga abierta.
+        // Al montar el componente se recupera el CSV guardado por el servicio.
+        // No hay peticion HTTP: la lectura se realiza desde sessionStorage.
         const stored = loadUploadedCsv();
         if (stored) {
             setUploaded(stored);
         }
     }, []);
 
+    // Recibe el evento del input de tipo file, procesa el primer archivo y
+    // actualiza el estado solo cuando el parser devuelve un CSV valido.
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) {
@@ -129,6 +143,8 @@ function Dashboard() {
         setUploaded(parsed);
     };
 
+    // Calcula los indicadores que dependen del CSV. useMemo evita repetir estos
+    // recorridos cuando React renderiza por un motivo que no cambia los datos.
     const reportSummary = useMemo(() => {
         // Este resumen depende solo del archivo activo. useMemo evita repetir
         // el recorrido de todas las filas durante renders sin cambios de datos.
@@ -157,6 +173,7 @@ function Dashboard() {
         };
     }, [uploaded]);
 
+    // Genera la lista de ejercicios NumPy solo cuando cambia el CSV activo.
     const numpyProblems = useMemo(() => {
         if (!uploaded) {
             return [];
@@ -164,6 +181,7 @@ function Dashboard() {
         return buildNumpyProblems(uploaded.headers, uploaded.rows);
     }, [uploaded]);
 
+    // Genera la lista de ejercicios Pandas con la misma fuente de datos.
     const pandasProblems = useMemo(() => {
         if (!uploaded) {
             return [];
@@ -171,11 +189,13 @@ function Dashboard() {
         return buildPandasProblems(uploaded.headers, uploaded.rows);
     }, [uploaded]);
 
+    // La tabla inicial limita la cantidad de filas para mantener la vista
+    // previa legible; el archivo completo sigue disponible en memoria.
     const previewRows = uploaded?.rows.slice(0, 5) ?? [];
 
+    // Serializa el resumen y lo descarga desde el navegador. Esto es una
+    // exportacion frontend: no intervienen servidor, API ni base de datos.
     const exportReport = () => {
-        // El reporte se genera en el cliente como texto plano y se descarga
-        // mediante una URL temporal; no se necesita un endpoint del servidor.
         if (!uploaded || !reportSummary) {
             return;
         }
@@ -208,7 +228,9 @@ function Dashboard() {
     };
 
     return (
+        // Contenedor raiz que recibe los estilos especificos de Dashboard.css.
         <div className="dashboard-page">
+            {/* Encabezado: titulo, descarga opcional y selector de archivo. */}
             <div className="dashboard-header">
                 <div>
                     <p className="eyebrow">Generador de análisis</p>
@@ -234,6 +256,8 @@ function Dashboard() {
                 />
             </div>
 
+            {/* Sin datos se muestra la guia de carga; con datos se renderiza
+                todo el contenido calculado a partir del CSV activo. */}
             {!uploaded ? (
                 <div className="empty-state">
                     <div className="empty-icon">📊</div>
@@ -242,6 +266,7 @@ function Dashboard() {
                 </div>
             ) : (
                 <>
+                    {/* Indicadores rapidos derivados de reportSummary. */}
                     <div className="summary-grid">
                         <div className="summary-card accent">
                             <span>Archivo</span>
@@ -261,6 +286,7 @@ function Dashboard() {
                         </div>
                     </div>
 
+                    {/* Reporte inicial con resumen general e informacion clave. */}
                     <section className="report-section">
                         <div className="section-title-row">
                             <h2>Reporte 1</h2>
@@ -289,6 +315,7 @@ function Dashboard() {
                         </div>
                     </section>
 
+                    {/* Vista limitada a cinco filas para inspeccionar el formato. */}
                     <section className="table-section">
                         <div className="section-title-row">
                             <h2>Vista previa del CSV</h2>
@@ -316,6 +343,8 @@ function Dashboard() {
                         </div>
                     </section>
 
+                    {/* Las listas se construyen dinamicamente con los nombres de
+                        columnas del archivo y se separan por herramienta. */}
                     <section className="problems-section">
                         <div className="problem-column">
                             <div className="section-title-row">

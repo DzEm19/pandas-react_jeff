@@ -443,12 +443,16 @@ nav a.active {
 }
 
 /* ============ DASHBOARD ============ */
+/* Esta seccion es global porque DashboardLayout permanece montado mientras
+  cambian las rutas hijas. Define la carcasa compartida del area /admin. */
 
+/* Organiza sidebar fijo y contenido principal a lo largo de toda la ventana. */
 .dash-layout {
   display: flex;
   min-height: 100vh;
 }
 
+/* Barra lateral fija que contiene las rutas administrativas. */
 .dash-sidebar {
   width: 220px;
   background: #1e293b;
@@ -460,6 +464,7 @@ nav a.active {
   height: 100vh;
 }
 
+/* Marca de la aplicacion dentro de la navegacion. */
 .dash-sidebar h2 {
   color: white;
   font-size: 20px;
@@ -468,6 +473,7 @@ nav a.active {
   border-bottom: 1px solid #334155;
 }
 
+/* Enlaces normales, hover y estado activo gestionado por NavLink. */
 .dash-sidebar a {
   color: #94a3b8;
   text-decoration: none;
@@ -486,12 +492,14 @@ nav a.active {
   color: white;
 }
 
+/* Separa el enlace de salida del resto de herramientas. */
 .dash-logout {
   margin-top: auto;
   border-top: 1px solid #334155;
   padding-top: 16px;
 }
 
+/* Reserva el margen de la sidebar y el fondo del contenido de cada ruta. */
 .dash-main {
   flex: 1;
   margin-left: 220px;
@@ -499,6 +507,7 @@ nav a.active {
   background: #f1f5f9;
 }
 
+/* Estilos de la vista de historial CsvFiles, que usa estas clases antiguas. */
 .dash-page h2 {
   font-size: 24px;
 }
@@ -510,6 +519,8 @@ nav a.active {
   margin-bottom: 20px;
 }
 
+/* Componentes de dashboard legado: se conservan para las tablas del historial
+  y para pantallas que aun utilicen estas clases genericas. */
 .btn-import {
   padding: 8px 16px;
   background: #3b82f6;
@@ -581,6 +592,7 @@ nav a.active {
   text-transform: uppercase;
 }
 
+/* Badges de estado reutilizables en el area administrativa. */
 .badge {
   padding: 3px 10px;
   border-radius: 12px;
@@ -604,6 +616,8 @@ nav a.active {
 }
 
 @media (max-width: 768px) {
+  /* En movil reduce la sidebar y deja que el contenido ocupe el espacio
+     restante; las etiquetas se ocultan para preservar el area de lectura. */
   .dash-sidebar {
     width: 60px;
   }

@@ -2,19 +2,24 @@ import { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { loadCsvHistory, type CsvHistoryEntry } from '../services/csvStorage';
 
+// Convierte la fecha ISO producida por csvStorage en un formato local legible.
 const formatDate = (value: string) => new Intl.DateTimeFormat('es-MX', {
     dateStyle: 'medium',
     timeStyle: 'short',
 }).format(new Date(value));
 
 function CsvFiles() {
+    // Esta vista consume solo los metadatos persistidos en localStorage; no
+    // necesita conservar ni volver a procesar el contenido de cada CSV.
     const [history, setHistory] = useState<CsvHistoryEntry[]>([]);
 
     useEffect(() => {
+        // Carga el historial cuando la ruta se monta para poblar la tabla.
         setHistory(loadCsvHistory());
     }, []);
 
     return (
+        // Contenedor que reutiliza la estructura visual del area administrativa.
         <div className="dash-page">
             <div className="dash-top">
                 <div>
@@ -28,6 +33,7 @@ function CsvFiles() {
                 El archivo activo se reinicia al cerrar esta pestaña. Este historial permanece guardado.
             </div>
 
+            {/* Cambia entre estado vacio y tabla segun los metadatos disponibles. */}
             {history.length === 0 ? (
                 <div className="empty-state">
                     <h2>Aún no hay archivos registrados</h2>

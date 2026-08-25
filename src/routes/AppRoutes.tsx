@@ -14,6 +14,8 @@ import AnalysisSection from '../pages/AnalysisSection';
 import Report from '../pages/Report';
 
 function AppRoutes() {
+    // Define dos zonas: paginas publicas con MainLayout y herramientas de
+    // analisis bajo /admin, todas agrupadas dentro de DashboardLayout.
     return (
         <Routes>
             <Route element={<MainLayout />}>
@@ -24,6 +26,7 @@ function AppRoutes() {
                 <Route path="/login" element={<Login />} />
             </Route>
 
+            {/* El index representa /admin; las rutas hijas comparten sidebar. */}
             <Route path="/admin" element={<DashboardLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="archivos" element={<CsvFiles />} />

@@ -3,6 +3,7 @@ import './Dashboard.css';
 import { loadUploadedCsv, type ParsedCsv } from '../services/csvStorage';
 
 const normalize = (value: string) => value.replace(/[$%\s]/g, '').replace(/,/g, '');
+// Determina si una celda puede incluirse en el perfil estadistico de su columna.
 const isNumeric = (value: string) => value.trim() !== '' && !Number.isNaN(Number(normalize(value)));
 
 type ColumnProfile = {
@@ -14,11 +15,13 @@ type ColumnProfile = {
 };
 
 function Report() {
+    // El reporte usa el mismo CSV activo que Dashboard y AnalysisSection,
+    // compartido mediante sessionStorage en lugar de propiedades entre rutas.
     const [uploaded] = useState<ParsedCsv | null>(() => loadUploadedCsv());
 
     const summary = useMemo(() => {
-        // Recorre el CSV una vez por cambio de archivo y prepara los datos de
-        // las tarjetas, la tabla y la barra de calidad.
+        // Recorre el CSV una vez por cambio de archivo y prepara tarjetas,
+        // perfiles de columnas, tabla de vacios y barra de calidad.
         if (!uploaded) return null;
         const numericColumns = uploaded.headers.filter((header) => uploaded.rows.some((row) => isNumeric(row[header] ?? '')));
         const missingByColumn = uploaded.headers.map((header) => ({
@@ -26,8 +29,8 @@ function Report() {
             missing: uploaded.rows.filter((row) => !row[header]).length,
         }));
         const profiles: ColumnProfile[] = uploaded.headers.map((header) => {
-            // El tipo se infiere por la presencia de al menos un valor numerico;
-            // las celdas vacias no cuentan para el promedio.
+            // El tipo se infiere por la presencia de un numero; vacios no
+            // participan en el promedio ni en el conteo de valores unicos.
             const values = uploaded.rows.map((row) => row[header] ?? '');
             const numericValues = values.filter(isNumeric).map((value) => Number(normalize(value)));
             return {
@@ -51,8 +54,8 @@ function Report() {
     }, [uploaded]);
 
     const downloadReport = () => {
-        // Convierte el resumen en texto plano y usa Blob para iniciar una
-        // descarga local sin enviar los datos fuera del navegador.
+        // Convierte el resumen en texto y dispara una descarga local con Blob;
+        // el CSV y el reporte permanecen en el navegador.
         if (!uploaded || !summary) return;
         const content = [
             'REPORTE DEL CSV',
@@ -78,11 +81,13 @@ function Report() {
     };
 
     return (
+        // Presenta el resumen calculado o explica que falta una carga inicial.
         <div className="dashboard-page">
             <div className="dashboard-header">
                 <div><p className="eyebrow">Análisis del archivo</p><h1>Reporte</h1></div>
                 {uploaded && <button className="secondary-button" type="button" onClick={downloadReport}>Descargar Reporte</button>}
             </div>
+            {/* La rama depende de la existencia del CSV activo. */}
             {!uploaded ? <div className="empty-state"><h2>Primero sube un archivo CSV</h2><p>Regresa al Dashboard para cargar los datos del reporte.</p></div> : (
                 <>
                     <div className="summary-grid">

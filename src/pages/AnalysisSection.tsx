@@ -4,13 +4,18 @@ import { loadUploadedCsv, type CsvRow, type ParsedCsv } from '../services/csvSto
 
 type AnalysisKind = 'numpy' | 'pandas';
 
+// Aplica la misma limpieza numerica que Dashboard para que las soluciones
+// interpretan de forma consistente importes, porcentajes y separadores.
 const normalizeNumericValue = (value: string): string => value.replace(/[$%\s]/g, '').replace(/,/g, '');
 
+// Identifica celdas numericas sin lanzar excepciones ante vacios o texto.
 const isNumericValue = (value: string): boolean => {
     if (!value || value.trim() === '') return false;
     return !Number.isNaN(Number(normalizeNumericValue(value)));
 };
 
+// Extrae una columna como numeros y descarta valores que no puedan participar
+// en las operaciones equivalentes a NumPy/Pandas.
 const numericValues = (column: string, rows: CsvRow[]): number[] => rows
     .map((row) => row[column] ?? '')
     .filter(isNumericValue)
@@ -28,8 +33,8 @@ const columnsFor = (headers: string[], rows: CsvRow[]) => {
 };
 
 const buildProblems = (kind: AnalysisKind, data: ParsedCsv) => {
-    // La lista cambia segun la herramienta seleccionada, pero comparte la
-    // seleccion de columnas y el formato de salida de cada ejercicio.
+    // Comparte seleccion de columnas y formato, pero cambia los enunciados
+    // segun la herramienta elegida en la ruta.
     const columns = columnsFor(data.headers, data.rows);
     const { primary, secondary, text } = columns;
 
@@ -98,17 +103,23 @@ const solveProblem = (
 };
 
 function AnalysisSection({ kind }: { kind: AnalysisKind }) {
+    // Lee una vez el CSV activo al montar la pagina; kind permite reutilizar
+    // este componente para /numpy y /pandas sin duplicar la pantalla.
     const [uploaded] = useState<ParsedCsv | null>(() => loadUploadedCsv());
 
+    // Las soluciones se calculan localmente cada vez que cambia la fuente o el
+    // modo de analisis. No se ejecuta Python ni se llama a una API externa.
     const problems = useMemo(() => uploaded ? buildProblems(kind, uploaded) : [], [kind, uploaded]);
     const label = kind === 'numpy' ? 'NumPy' : 'Pandas';
 
     return (
+        // La vista conserva las clases del dashboard para compartir estilos.
         <div className="dashboard-page">
             <div className="dashboard-header">
                 <div><p className="eyebrow">Ejercicios resueltos</p><h1>{label}</h1></div>
                 {uploaded && <span className="report-tag">Fuente: {uploaded.fileName}</span>}
             </div>
+            {/* Sin CSV no hay fuente para resolver; con CSV se listan peticion y respuesta. */}
             {!uploaded ? <div className="empty-state"><h2>Primero sube un archivo CSV</h2><p>Regresa al Dashboard para cargar los datos que alimentarán estos ejercicios.</p></div> : (
                 <section className="problems-section single-problems-column">
                     <div className="problem-column"><div className="section-title-row"><h2>Petición y solución</h2><span className="report-tag">{problems.length} ejercicios</span></div>
