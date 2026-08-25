@@ -3,7 +3,9 @@ import path from 'path';
 import puppeteer from 'puppeteer';
 
 (async () => {
+  console.log('headless_image_test: starting');
   const outDir = path.resolve(process.cwd(), 'files');
+  console.log('headless_image_test: outDir=', outDir);
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
   const logPath = path.join(outDir, 'image_test_console.log');
   const screenshotPath = path.join(outDir, 'image_test_screenshot.png');
@@ -54,4 +56,4 @@ import puppeteer from 'puppeteer';
     console.error(errMsg);
     process.exit(2);
   }
-});
+})();
