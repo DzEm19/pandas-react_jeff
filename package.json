@@ -13,6 +13,7 @@
     "@teachablemachine/pose": "^0.8.6",
     "@tensorflow-models/speech-commands": "^0.5.4",
     "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-converter": "^4.22.0",
     "@tensorflow/tfjs-core": "^4.22.0",
     "@tensorflow/tfjs-data": "^4.22.0",
     "@tensorflow/tfjs-layers": "^4.22.0",
