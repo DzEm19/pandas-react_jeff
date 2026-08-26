@@ -138,8 +138,21 @@ function AudioModel() {
             setScores(classLabels.map(() => 0));
 
             recognizer.listen(async (result) => {
-                const resultScores = Array.isArray(result.scores) ? result.scores[0] : result.scores;
-                setScores(Array.from(resultScores));
+                try {
+                    const rawScores = result?.scores;
+                    const nextScores = Array.isArray(rawScores)
+                        ? rawScores.flatMap((scoreSet) => Array.from(scoreSet ?? []))
+                        : Array.from(rawScores ?? []);
+
+                    if (!nextScores.length) {
+                        return;
+                    }
+
+                    setScores(nextScores.map((score) => Number(score ?? 0)));
+                } catch (caughtError) {
+                    console.error('Audio prediction parse error:', caughtError);
+                    setError('El modelo de audio respondió en un formato inesperado.');
+                }
             }, {
                 includeSpectrogram: true,
                 probabilityThreshold: 0.75,
@@ -148,6 +161,7 @@ function AudioModel() {
             });
             setIsListening(true);
         } catch (caughtError) {
+            console.error('Audio model load error:', caughtError);
             setError(caughtError instanceof Error
                 ? caughtError.message
                 : 'No se pudo cargar el modelo de audio.');

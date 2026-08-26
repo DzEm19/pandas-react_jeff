@@ -3,7 +3,7 @@ import * as tmPose from '@teachablemachine/pose';
 import type { CustomPoseNet } from '@teachablemachine/pose';
 import './Movement.css';
 
-const MODEL_URL = '/my_model/';
+const MODEL_URL = '/my_model_pose/';
 const CAMERA_SIZE = 400;
 const CAPTURE_CONFIDENCE = 0.85;
 
@@ -49,27 +49,33 @@ function Movement() {
         if (!model || !webcam || !canvas || !isMountedRef.current) return;
 
         webcam.update();
-        const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-        const nextPredictions = await model.predict(posenetOutput);
-        if (!isMountedRef.current) return;
-
         const context = canvas.getContext('2d');
         if (!context) return;
         context.drawImage(webcam.canvas, 0, 0);
-        tmPose.drawKeypoints(pose.keypoints, 0.5, context);
-        tmPose.drawSkeleton(pose.keypoints, 0.5, context);
-        setPredictions(nextPredictions);
 
-        const bestPrediction = nextPredictions.reduce<Prediction | null>((best, prediction) => (
-            !best || prediction.probability > best.probability ? prediction : best
-        ), null);
-        const now = Date.now();
-        if (bestPrediction && bestPrediction.probability >= CAPTURE_CONFIDENCE
-            && bestPrediction.className !== lastCapturedLabelRef.current
-            && now - lastCaptureTimeRef.current > 1000) {
-            lastCapturedLabelRef.current = bestPrediction.className;
-            lastCaptureTimeRef.current = now;
-            setPendingCapture({ image: canvas.toDataURL('image/jpeg', 0.9), movement: bestPrediction.className });
+        try {
+            const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+            const nextPredictions = await model.predict(posenetOutput);
+            if (!isMountedRef.current) return;
+
+            setError('');
+            tmPose.drawKeypoints(pose.keypoints, 0.5, context);
+            tmPose.drawSkeleton(pose.keypoints, 0.5, context);
+            setPredictions(nextPredictions);
+
+            const bestPrediction = nextPredictions.reduce<Prediction | null>((best, prediction) => (
+                !best || prediction.probability > best.probability ? prediction : best
+            ), null);
+            const now = Date.now();
+            if (bestPrediction && bestPrediction.probability >= CAPTURE_CONFIDENCE
+                && bestPrediction.className !== lastCapturedLabelRef.current
+                && now - lastCaptureTimeRef.current > 1000) {
+                lastCapturedLabelRef.current = bestPrediction.className;
+                lastCaptureTimeRef.current = now;
+                setPendingCapture({ image: canvas.toDataURL('image/jpeg', 0.9), movement: bestPrediction.className });
+            }
+        } catch {
+            setError('La cámara funciona, pero el modelo cargado no es compatible con reconocimiento de poses.');
         }
         animationFrameRef.current = requestAnimationFrame(() => void predict());
     };

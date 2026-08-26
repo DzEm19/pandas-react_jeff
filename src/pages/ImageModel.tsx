@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as tmImage from '@teachablemachine/image';
 import './ImageModel.css';
 
-const MODEL_URL = '/my_model/';
+const MODEL_URL = '/my_model_image/';
 const CAMERA_SIZE = 400;
 const CAPTURE_CONFIDENCE = 0.85;
 
