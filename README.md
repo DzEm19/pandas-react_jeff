@@ -1,3 +1,13 @@
+## Reconocimiento facial con DeepFace y Supabase
+
+1. Copia `.env.example` como `.env.local` y completa `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY`.
+2. Ejecuta `docs/supabase-image.sql` en el SQL Editor de Supabase.
+3. Instala el backend con `python3 -m pip install -r backend/requirements.txt`.
+4. Inicia la API con `npm run deepface` y la aplicación con `npm run dev`.
+
+DeepFace compara cada captura de cámara contra las imágenes autorizadas guardadas en Supabase. Si encuentra coincidencia, se muestran nombre, apellido, edad, DNI, teléfono e imagen guardada. `SUPABASE_SERVICE_ROLE_KEY` solo debe existir en el backend y nunca en variables `VITE_*`.
+
+También existe la carpeta `authorized_faces/` para guardar localmente fotos de referencia. Coloca allí una foto clara en formato JPG o PNG. El registro oficial debe completarse desde la sección de imagen para guardar la foto y los datos personales en Supabase.
 # React + TypeScript + Vite
 
 ## Documentacion del dashboard

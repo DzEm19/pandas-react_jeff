@@ -8,9 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+__pycache__
 dist
 dist-ssr
 *.local
+
+# Fotos personales de referencia; se conservan solo localmente.
+authorized_faces/*.jpg
+authorized_faces/*.jpeg
+authorized_faces/*.png
 
 # Editor directories and files
 .vscode/*
